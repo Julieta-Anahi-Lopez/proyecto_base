@@ -1,0 +1,29 @@
+
+
+services:
+  backend:
+    build: ./backend
+    container_name: django_backend
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./backend:/code
+    ports:
+      - "8000:8000"
+    env_file:   # Añadir el archivo .env del backend
+      - ./backend/.env
+    environment:
+      - DEBUG=1  # Puedes pasar otras variables de entorno aquí, o incluirlas en el .env
+
+
+  frontend:
+    build: ./frontend
+    container_name: react_frontend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules  # Ignorar node_modules en el volumen para evitar problemas
+    ports:
+      - "3000:3000"
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    depends_on:
+      - backend  # Opcional, pero asegura que el backend esté levantado primero

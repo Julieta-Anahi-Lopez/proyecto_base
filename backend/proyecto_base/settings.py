@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'apps.prueba',
+    'apps.articulos',
 ]
 
 MIDDLEWARE = [
@@ -85,7 +86,14 @@ WSGI_APPLICATION = 'proyecto_base.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
-    'default': env.db()
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'julietamb',
+        'USER': 'julieta',
+        'PASSWORD': 'julieta1234',
+        'HOST': '200.32.57.157',  # Si es local, puedes usar 'localhost'
+        'PORT': '3306',  # El puerto por defecto de MySQL
+    }
 }
 
 

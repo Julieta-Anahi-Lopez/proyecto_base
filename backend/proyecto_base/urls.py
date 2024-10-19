@@ -19,4 +19,5 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('apps.prueba.urls')),  # Asegúrate de incluir las rutas de la app
+    path('articulos/', include('apps.articulos.urls')),  # Asegúrate de incluir las rutas de la app
 ]

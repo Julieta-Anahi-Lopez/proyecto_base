@@ -10,7 +10,7 @@ from django.db import models
 
 class Articulos(models.Model):
     codigo = models.CharField(db_column='Codigo', primary_key=True, max_length=20)  # Field name made lowercase.
-    equiva = models.CharField(db_column='Equiva', max_length=30, blank=True, null=True)  # Field name made lowercase.
+    # equiva = models.CharField(db_column='Equiva', max_length=30, blank=True, null=True)  # Field name made lowercase.
     nombre = models.CharField(db_column='Nombre', max_length=255, blank=True, null=True)  # Field name made lowercase.
     nrouni = models.IntegerField(db_column='NroUni', blank=True, null=True)  # Field name made lowercase.
     nrogru = models.IntegerField(db_column='NroGru', blank=True, null=True)  # Field name made lowercase.
@@ -45,7 +45,7 @@ class Articulos(models.Model):
     totitc = models.FloatField(db_column='TotITC', blank=True, null=True)  # Field name made lowercase.
     impco2 = models.FloatField(db_column='ImpCO2', blank=True, null=True)  # Field name made lowercase.
     coddgr = models.CharField(db_column='CodDGR', max_length=6, blank=True, null=True)  # Field name made lowercase.
-    dto567 = models.IntegerField(db_column='Dto567', blank=True, null=True)  # Field name made lowercase.
+    # dto567 = models.IntegerField(db_column='Dto567', blank=True, null=True)  # Field name made lowercase.
     codncm = models.CharField(db_column='CodNCM', max_length=12, blank=True, null=True)  # Field name made lowercase.
     nrofam = models.TextField(db_column='NroFam', blank=True, null=True)  # Field name made lowercase.
 

@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'apps.prueba',
     'apps.articulos',
+    'apps.categorias',
 ]
 
 MIDDLEWARE = [
@@ -88,7 +89,7 @@ WSGI_APPLICATION = 'proyecto_base.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'julietamb',
+        'NAME': 'julieta',
         'USER': 'julieta',
         'PASSWORD': 'julieta1234',
         'HOST': '200.32.57.157',  # Si es local, puedes usar 'localhost'
@@ -133,7 +134,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = "static/"
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

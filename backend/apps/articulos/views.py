@@ -4,6 +4,8 @@ from .serializers import ArticulosSerializer, ImagenesSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import OuterRef, Subquery
 from django.conf import settings
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 
 class ArticulosViewSet(viewsets.ModelViewSet):
     serializer_class = ArticulosSerializer
@@ -28,10 +30,10 @@ class ArticulosViewSet(viewsets.ModelViewSet):
 
         return articulos
     
-    
-     # Agregar filtros
-    filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['nrogru', 'nrosub', 'precio', 'codigo', 'nombre', 'observ']
+    @method_decorator(cache_page(60 * 60 * 2))
+    def list(self, request, *args, **kwargs):
+        return super().list(self, request, *args, **kwargs)
+
     
     
     
@@ -43,5 +45,3 @@ class ImagenesViewSet(viewsets.ModelViewSet):
 
 
 
-# print('http://localhost:8000/media/Imagenes/ART_001_1.jpg')
-# URLDOMAIN+SETTINGS.MEDIA+ELEMENTO DE LA QUERY DEL INNERJOIN RIGHT ARTICULOS IMAGENES codeimg y codigo

@@ -22,3 +22,13 @@ class TipoSubrubros(models.Model):
         managed = False
         db_table = 'tipo_subrubros'
         unique_together = (('nrorub', 'codigo'),)
+        
+        
+class TipoMarcas(models.Model):
+    codigo = models.AutoField(db_column='Codigo', primary_key=True)  # Field name made lowercase.
+    nombre = models.CharField(db_column='Nombre', max_length=60, blank=True, null=True)  # Field name made lowercase.
+    verweb = models.IntegerField(db_column='VerWeb', blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'tipo_marcas'

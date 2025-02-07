@@ -1,6 +1,5 @@
 from rest_framework import serializers
-from .models import TipoRubros
-from .models import TipoSubrubros
+from .models import TipoRubros, TipoSubrubros, TipoMarcas
 
 class TipoRubrosSerializer(serializers.ModelSerializer):
     class Meta:
@@ -34,3 +33,10 @@ class TipoRubrosWithSubrubrosSerializer(serializers.ModelSerializer):
         subrubros = TipoSubrubros.objects.filter(nrorub=obj.codigo)  # Filtra por relación
         # from .serializers import TipoSubrubrosSerializer  # Importa sin modificar el original
         return TipoSubrubrosSerializer(subrubros, many=True).data
+
+
+
+class TipoMarcasSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TipoMarcas
+        fields = '__all__'  # Puedes personalizar los campos si es necesario

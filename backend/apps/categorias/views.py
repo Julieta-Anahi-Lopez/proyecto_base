@@ -5,8 +5,8 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from .models import TipoRubros
-from .serializers import TipoRubrosSerializer, TipoSubrubrosSerializer, TipoRubrosWithSubrubrosSerializer
-from .models import TipoSubrubros
+from .serializers import TipoRubrosSerializer, TipoSubrubrosSerializer, TipoRubrosWithSubrubrosSerializer, TipoMarcasSerializer
+from .models import TipoSubrubros, TipoMarcas
 from rest_framework import generics
 
 
@@ -73,3 +73,11 @@ class TipoRubrosWithSubrubrosViewSet(viewsets.ReadOnlyModelViewSet):
 
         return Response(data)  # Devolver la respuesta en formato JSON
 
+
+
+
+class TipoMarcasViewSet(viewsets.ReadOnlyModelViewSet):  # Solo permite GET
+    serializer_class = TipoMarcasSerializer
+
+    def get_queryset(self):
+        return TipoMarcas.objects.all()  # Filtra solo los registros donde verweb='1'

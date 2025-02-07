@@ -16,8 +16,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from apps.categorias.views import TipoRubrosViewSet, TipoSubrubrosViewSet, TipoRubrosWithSubrubrosViewSet
-from apps.articulos.views import ArticulosViewSet
+from apps.categorias.views import TipoRubrosViewSet, TipoSubrubrosViewSet, TipoRubrosWithSubrubrosViewSet, TipoMarcasViewSet
+from apps.articulos.views import ArticulosViewSet, ImagenesViewSet
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -27,10 +27,12 @@ router.register(r'tipo-rubros', TipoRubrosViewSet, basename='tipo-rubros')
 router.register(r'articulos', ArticulosViewSet, basename='articulos')
 router.register(r'tipo-subrubros', TipoSubrubrosViewSet, basename='tipo-subrubros')
 router.register(r'tipo-rubros-con-subrubros', TipoRubrosWithSubrubrosViewSet, basename='tipo-rubros-con-subrubros')
-
+router.register(r'tipo-marcas', TipoMarcasViewSet, basename='tipo-marcas')
+router.register(r'imagenes', ImagenesViewSet, basename='imagenes')
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(router.urls)),    
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+

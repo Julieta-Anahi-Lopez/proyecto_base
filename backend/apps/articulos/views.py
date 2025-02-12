@@ -17,7 +17,6 @@ class ArticulosViewSet(viewsets.ModelViewSet):
         # Obtener todas las imágenes en una sola consulta
         imagenes = Imagenes.objects.all()
 
-        # Crear un diccionario con las imágenes organizadas por codimg
         imagenes_dict = {}
         for img in imagenes:
             if img.codimg not in imagenes_dict:

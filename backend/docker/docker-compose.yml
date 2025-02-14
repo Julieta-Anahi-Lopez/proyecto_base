@@ -1,22 +1,19 @@
-version: '3'
-
 services:
   backend:
     build: .
     container_name: proyecto_base_backend
-    command: python manage.py runserver 0.0.0.0:8000
+    command: >
+      sh -c "
+        python manage.py runserver 0.0.0.0:8000
+        "
     volumes:
-      - ../:/code  # Esto monta la carpeta backend entera en /code en el contenedor
+      - ../:/code
     ports:
-      - "8000:8000"
-    env_file: 
+      - "8001:8000"
+    env_file:
       - .env
-    environment:
-      - DEBUG=1
     networks:
-      - proyecto_base_net  # Conecta el backend a la red externa
-
+      - proyecto_base_net
+    restart: always
 networks:
   proyecto_base_net:
-    external: true  # Indica que esta red es externa
-

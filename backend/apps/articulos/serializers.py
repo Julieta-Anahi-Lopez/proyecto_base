@@ -12,9 +12,10 @@ class ArticulosSerializer(serializers.ModelSerializer):
             request = self.context.get('request')
 
             # Acceder a las imágenes cargadas en la vista
-            imagenes = getattr(obj, 'imagenes_cache', [])
-
+            imagenes = getattr(obj, 'imagenes_cache', [])            
+            # print(f"IMAGENES EN EL SERIALIZER: {imagenes}")
             imagenes_dict = {}
+
             for i, img in enumerate(imagenes, start=1):
                 key = f"foto_{i}"  # foto_1, foto_2, etc.
                 imagenes_dict[key] = request.build_absolute_uri(f"{settings.MEDIA_URL}Imagenes/{img.nomarc}") if request else f"{settings.MEDIA_URL}Imagenes/{img.nomarc}"

@@ -38,7 +38,7 @@ class Articulos(models.Model):
     # comisi = models.FloatField(db_column='Comisi', blank=True, null=True)  # Field name made lowercase.
     # publi1 = models.FloatField(db_column='Publi1', blank=True, null=True)  # Field name made lowercase.
     # publi2 = models.FloatField(db_column='Publi2', blank=True, null=True)  # Field name made lowercase.
-    # nromar = models.IntegerField(db_column='NroMar', blank=True, null=True)  # Field name made lowercase.
+    nromar = models.IntegerField(db_column='NroMar', blank=True, null=True)  # Field name made lowercase.
     # aplica = models.CharField(db_column='Aplica', max_length=35, blank=True, null=True)  # Field name made lowercase.
     # esbien = models.IntegerField(db_column='EsBien', blank=True, null=True)  # Field name made lowercase.
     # esfavo = models.IntegerField(db_column='EsFavo', blank=True, null=True)  # Field name made lowercase.

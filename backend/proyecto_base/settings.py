@@ -32,6 +32,7 @@ DEBUG = 1 # env.bool('DEBUG', default=True)
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[])
 
 
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -59,10 +60,11 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
+CORS_ALLOW_ALL_ORIGINS = True
 # Permitir que React pueda hacer peticiones al backend
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',
+    'http://localhost:3001',
+    'http://192.168.0.102:3001',
 ]
 
 ROOT_URLCONF = 'proyecto_base.urls'

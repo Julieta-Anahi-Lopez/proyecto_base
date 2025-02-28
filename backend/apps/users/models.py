@@ -51,12 +51,12 @@ class Contactos(models.Model):
     exeley = models.IntegerField(db_column='ExeLey', blank=True, null=True)  # Field name made lowercase.
     calcli = models.IntegerField(db_column='CalCli', blank=True, null=True)  # Field name made lowercase.
     clifac = models.IntegerField(db_column='CliFac', blank=True, null=True)  # Field name made lowercase.
-    dto567 = models.TextField(db_column='Dto567', blank=True, null=True)  # Field name made lowercase. This field type is a guess.
+    dto567 = models.BooleanField(db_column='Dto567', blank=True, null=True)  # Field name made lowercase. This field type is a guess.
     nomdes = models.CharField(db_column='NomDes', max_length=80, blank=True, null=True)  # Field name made lowercase.
     docdes = models.CharField(db_column='DocDes', max_length=13, blank=True, null=True)  # Field name made lowercase.
     obstra = models.CharField(db_column='ObsTra', max_length=255, blank=True, null=True)  # Field name made lowercase.
-    grande = models.TextField(db_column='Grande', blank=True, null=True)  # Field name made lowercase. This field type is a guess.
-    cbuinf = models.TextField(db_column='CBUInf', blank=True, null=True)  # Field name made lowercase. This field type is a guess.
+    grande = models.BooleanField(db_column='Grande', blank=True, null=True)  # Field name made lowercase. This field type is a guess.
+    cbuinf = models.BooleanField(db_column='CBUInf', blank=True, null=True)  # Field name made lowercase. This field type is a guess.
     periva = models.IntegerField(db_column='PerIVA', blank=True, null=True)  # Field name made lowercase.
     
     class Meta:

@@ -1,10 +1,13 @@
 from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, views
 from django.db import transaction
 from .models import Contactos, WebUsuarios
 from .serializers import ContactosSerializer, WebUsuariosListSerializer, WebUsuariosCreateUpdateSerializer
+from .serializers import CustomTokenObtainPairSerializer, CustomTokenRefreshSerializer
+from rest_framework.permissions import AllowAny
+from rest_framework_simplejwt.tokens import RefreshToken
 # Create your views here.
 
 
@@ -28,44 +31,55 @@ class WebUsuariosViewSet(viewsets.ModelViewSet):
         return WebUsuariosListSerializer
     
     def create(self, request, *args, **kwargs):
-        # serializer = self.get_serializer(data=request.data)
-        # serializer.is_valid(raise_exception=True)
-        print(request.data)
         with transaction.atomic():
-            # Aquí puedes agregar lógica personalizada para la creación
-            # Por ejemplo, crear primero el contacto y luego el usuario web
-            contacto = self._crear_contacto(request.data)
-            print(f"contacto al salir de self._crear_contacto: {contacto}")
-            codigo = contacto.nrocon
-            print(f"codigo: {codigo}")
-            nombre = contacto.nombre
-            clave = request.data.get('clave', '1234')
-            email = contacto.e_mail
-            catusu = request.data.get('catusu', 'C')
-            gposeg = request.data.get('gposeg', 0)
-            telcel = contacto.telcel
-            nrodoc = contacto.nrodoc
             try:
-                web_usuario = WebUsuarios.objects.create(codigo=codigo,
-                                                    nombre=nombre,
-                                                    clave=clave,
-                                                    email=email,
-                                                    catusu=catusu,
-                                                    gposeg=gposeg,
-                                                    telcel=telcel,
-                                                    nrodoc=nrodoc)
+                # Validación previa de datos críticos
+                if not request.data.get('nrodoc'):
+                    return Response({'error': 'El DNI es obligatorio'}, status=status.HTTP_400_BAD_REQUEST)
+                if not request.data.get('e_mail'):
+                    return Response({'error': 'El email es obligatorio'}, status=status.HTTP_400_BAD_REQUEST)
+                
+                # Verificación previa de duplicados en WebUsuarios
+                nrodoc = request.data.get('nrodoc')
+                email = request.data.get('e_mail')
+                
+                if WebUsuarios.objects.filter(nrodoc=nrodoc).exists():
+                    return Response({'error': 'Ya existe un usuario web con este DNI'}, status=status.HTTP_400_BAD_REQUEST)
+                
+                if WebUsuarios.objects.filter(e_mail=email).exists():
+                    return Response({'error': 'Ya existe un usuario web con este email'}, status=status.HTTP_400_BAD_REQUEST)
+                
+                # Crear contacto primero
+                contacto = self._crear_contacto(request.data)
+                    
+                # Preparar datos para el usuario web
+                usuario_data = {
+                    'codigo': contacto.nrocon,
+                    'nombre': contacto.nombre,
+                    'clave': request.data.get('clave', '1234'),  # Texto plano según requerimiento
+                    'e_mail': contacto.e_mail,
+                    'catusu': request.data.get('catusu', 'C'),
+                    'gposeg': request.data.get('gposeg', 0),
+                    'telcel': contacto.telcel,
+                    'nrodoc': contacto.nrodoc
+                }
+                
+                # Crear usuario web
+                web_usuario = WebUsuarios.objects.create(**usuario_data)
                 serializer = WebUsuariosListSerializer(web_usuario)
                 headers = self.get_success_headers(serializer.data)
+                
                 return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
+                
+            except ValueError as e:
+                # Error de validación (controlado)
+                return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
             except Exception as e:
-                raise e
-            # self.perform_create(serializer)
-        
-    
-    # def perform_create(self, serializer):
-
-    #     serializer.save()
+                # Error inesperado (no controlado)
+                return Response(
+                    {'error': f'Error inesperado: {str(e)}'},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                )
     
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
@@ -85,8 +99,8 @@ class WebUsuariosViewSet(viewsets.ModelViewSet):
     
     def _crear_contacto(self, data):
         # Lógica para crear un contacto
-        print('Creando contacto')
-        print(f"Data: {data}")
+        # print('Creando contacto')
+        # print(f"Data: {data}")
         nro_emp = data.get('nroemp', 1)
         nrocon = Contactos.objects.all().order_by('-nrocon').first().nrocon + 1
         # print(f"nrocon: {nrocon}")
@@ -103,7 +117,7 @@ class WebUsuariosViewSet(viewsets.ModelViewSet):
         telefo = data.get('telefo', 'Sin telefono')
         fax = data.get('fax', 'Sin fax')
         telcel = data.get('telcel', 'Sin celular')
-        e_mail = data.get('e_mail', 'Sin email')
+        e_mail = data.get('e_mail', None)
         fecnac = data.get('fecnac', '1900-01-01')
         cuit = data.get('cuit', 'Sin cuit')
         cativa = data.get('cativa', None)
@@ -148,8 +162,14 @@ class WebUsuariosViewSet(viewsets.ModelViewSet):
 
         if nrodoc is None:
             raise ValueError('El DNI es obligatorio es obligatorio')
+        if e_mail is None:
+            raise ValueError('El email es obligatorio')
         if cativa != 'CF' and cuit is None:
             raise ValueError('La categoria de iva es obligatoria')
+        dni_existente = Contactos.objects.filter(nrodoc=nrodoc).exists()
+        e_mail_existente = Contactos.objects.filter(e_mail=e_mail).exists()
+        if dni_existente or e_mail_existente:
+            raise ValueError('El DNI o el email ya existen en la lista de contactos.')
 
         contacto, creado = Contactos.objects.get_or_create(nroemp=nro_emp,
                                             nrocon=nrocon,
@@ -213,3 +233,71 @@ class WebUsuariosViewSet(viewsets.ModelViewSet):
 
         
 
+
+
+from rest_framework.response import Response
+from rest_framework import status, views
+from rest_framework.permissions import AllowAny
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework_simplejwt.tokens import RefreshToken
+from .models import WebUsuarios
+from .serializers import CustomTokenObtainPairSerializer, CustomTokenRefreshSerializer
+
+class LoginView(views.APIView):
+    """
+    Vista para login de usuarios web.
+    Recibe email y contraseña, valida credenciales y devuelve tokens JWT.
+    """
+    permission_classes = [AllowAny]  # Permitir acceso sin autenticación
+    
+    def post(self, request):
+        # Obtener credenciales
+        email = request.data.get('email')
+        clave = request.data.get('clave')
+        
+        # Validar que se proporcionaron ambos campos
+        if not email or not clave:
+            return Response(
+                {'error': 'Debe proporcionar email y contraseña'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        try:
+            # Buscar usuario por email
+            user = WebUsuarios.objects.get(e_mail=email)
+            
+            # Verificar contraseña (texto plano según requerimiento)
+            if user.clave != clave:
+                return Response(
+                    {'error': 'Credenciales inválidas'}, 
+                    status=status.HTTP_401_UNAUTHORIZED
+                )
+            
+            # Generar tokens JWT para el usuario
+            refresh = RefreshToken.for_user(user)
+            
+            # Devolver tokens y datos básicos del usuario
+            return Response({
+                'refresh': str(refresh),
+                'access': str(refresh.access_token),
+                'user': {
+                    'codigo': user.codigo,
+                    'nombre': user.nombre,
+                    'email': user.e_mail,
+                    'catusu': user.catusu
+                }
+            })
+            
+        except WebUsuarios.DoesNotExist:
+            # Por seguridad, no especificamos si el email no existe o la contraseña es incorrecta
+            return Response(
+                {'error': 'Credenciales inválidas'}, 
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+
+class CustomTokenRefreshView(TokenRefreshView):
+    """
+    Vista personalizada para refrescar tokens JWT
+    Usa nuestro serializador personalizado
+    """
+    serializer_class = CustomTokenRefreshSerializer

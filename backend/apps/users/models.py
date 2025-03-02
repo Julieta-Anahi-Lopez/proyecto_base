@@ -70,7 +70,7 @@ class WebUsuarios(models.Model):
     codigo = models.IntegerField(db_column='Codigo', primary_key=True)  # Field name made lowercase. The composite primary key (Codigo, CatUsu, NroDoc) found, that is not supported. The first column is selected.
     nombre = models.CharField(db_column='Nombre', max_length=40, blank=True, null=True)  # Field name made lowercase.       
     clave = models.CharField(db_column='Clave', max_length=20, blank=True, null=True)  # Field name made lowercase.
-    email = models.CharField(max_length=255, blank=True, null=True)
+    e_mail = models.CharField(db_column='email',max_length=255, blank=True, null=True)
     catusu = models.CharField(db_column='CatUsu', max_length=1)  # Field name made lowercase.
     gposeg = models.IntegerField(db_column='GpoSeg', blank=True, null=True)  # Field name made lowercase.
     telcel = models.CharField(db_column='TelCel', max_length=25, blank=True, null=True)  # Field name made lowercase.
@@ -81,4 +81,41 @@ class WebUsuarios(models.Model):
         db_table = 'web_usuarios'
         unique_together = (('codigo', 'catusu', 'nrodoc'),)  
 
+
+
+     # --- MÉTODOS AÑADIDOS PARA COMPATIBILIDAD CON JWT ---
+    
+    @property
+    def is_anonymous(self):
+        """
+        Requerido por JWT - Siempre devuelve False ya que un usuario cargado nunca es anónimo
+        """
+        return False
+        
+    @property
+    def is_authenticated(self):
+        """
+        Requerido por JWT - Siempre devuelve True ya que si tenemos una instancia del usuario,
+        ya lo consideramos autenticado
+        """
+        return True
+    
+    def get_username(self):
+        """
+        Requerido por JWT - Devuelve un identificador único para el usuario
+        """
+        return self.e_mail
+    # Añade este método a tu clase WebUsuarios en models.py si no lo tiene ya
+
+    def get_id(self):
+        """
+        Método necesario para que RefreshToken pueda obtener el ID del usuario
+        """
+        return self.codigo
+        
+    def __str__(self):
+        """
+        Representación en string del usuario
+        """
+        return f"{self.nombre} ({self.e_mail})"
         

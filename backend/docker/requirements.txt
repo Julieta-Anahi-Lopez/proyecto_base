@@ -8,3 +8,4 @@ djangorestframework==3.15.2
 mysqlclient ==2.2.7
 django-cors-headers
 django-filter==24.3
+djangorestframework-simplejwt==4.8.0

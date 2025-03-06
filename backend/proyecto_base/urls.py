@@ -23,7 +23,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 # from rest_framework_simplejwt.views import TokenRefreshView
 from apps.users.views import LoginView, CustomTokenRefreshView
-
+from apps.pedidos.views import PedidosViewSet
 
 router = DefaultRouter()
 router.register(r'tipo-rubros', TipoRubrosViewSet, basename='tipo-rubros')
@@ -34,6 +34,7 @@ router.register(r'tipo-marcas', TipoMarcasViewSet, basename='tipo-marcas')
 router.register(r'imagenes', ImagenesViewSet, basename='imagenes')
 router.register(r'contactos', ContactosViewSet, basename='contactos')
 router.register(r'web-usuarios', WebUsuariosViewSet, basename='web_usuarios')
+router.register(r'pedidos', PedidosViewSet, basename='pedidos')
 
 # Rutas para autenticación
 auth_urlpatterns = [
@@ -47,7 +48,7 @@ auth_urlpatterns = [
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include(router.urls)),    
+    path('api/', include(router.urls)),    
     path('api/auth/', include(auth_urlpatterns)),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.viewsets import ModelViewSet
-from .serializers import PedidosSerializer
-from .models import Pedidos
+from .serializers import PedidosSerializer, PedidosDetalleSerializer
+from .models import Pedidos, PedidosDetalle
 from rest_framework.response import Response
 from rest_framework import status
 from django.db import transaction
@@ -55,6 +55,15 @@ class PedidosViewSet(ModelViewSet):
         print(f"tipo_deposito: {tipo_deposito}")
         nro_est = '0'
         print(f"nro_est: {nro_est}")
+        # pedido_detalle = request.data['detalle']
+        # print(f"pedido_detalle: {pedido_detalle}")
+        # for detalle in pedido_detalle:
+        #     print(f"detalle: {detalle}")
+        #     print(f"detalle['codigo']: {detalle['codigo']}")
+        #     print(f"detalle['cantidad']: {detalle['cantidad']}")
+        #     print(f"detalle['precio']: {detalle['precio']}")
+        #     print(f"detalle['descuento']: {detalle['descuento']}")
+        #     print(f"detalle['total']: {detalle['total']}")
 
 
         pedido = {
@@ -97,3 +106,20 @@ class PedidosViewSet(ModelViewSet):
         #         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
         #     except Exception as e:
         #         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+class PedidoDetalleViewSet(ModelViewSet):
+    queryset = PedidosDetalle.objects.all()
+    serializer_class = PedidosDetalleSerializer
+    permission_classes = []
+
+    def get_serializer_class(self):
+        #Por ahora lo dejamos definido asi, luego si es necesario agrego otro.
+        return PedidosDetalleSerializer
+
+    def get_queryset(self):
+        return PedidosDetalle.objects.all()
+        #Evaluar agregar despues. Po ahora todos los pedidos
+        # return Pedidos.objects.filter(usuario=self.request.user)
+

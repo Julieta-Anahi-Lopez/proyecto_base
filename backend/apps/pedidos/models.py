@@ -22,3 +22,24 @@ class Pedidos(models.Model):
         managed = False
         db_table = 'pedidos'
         unique_together = (('nroemp', 'compro'),) 
+
+
+class PedidosDetalle(models.Model):
+    compro = models.CharField(db_column='Compro', max_length=13)  # Field name made lowercase.
+    nroord = models.IntegerField(db_column='NroOrd')  # Field name made lowercase.
+    codart = models.CharField(db_column='CodArt', max_length=20, blank=True, null=True)  # Field name made lowercase.
+    cantid = models.FloatField(db_column='Cantid', blank=True, null=True)  # Field name made lowercase.
+    descri = models.CharField(db_column='Descri', max_length=255, blank=True, null=True)  # Field name made lowercase.
+    penden = models.FloatField(db_column='PendEn', blank=True, null=True)  # Field name made lowercase.
+    pendfc = models.FloatField(db_column='PendFC', blank=True, null=True)  # Field name made lowercase.
+    precio = models.FloatField(db_column='Precio', blank=True, null=True)  # Field name made lowercase.
+    nrolis = models.IntegerField(db_column='NroLis', blank=True, null=True)  # Field name made lowercase.
+    pordes = models.FloatField(db_column='PorDes', blank=True, null=True)  # Field name made lowercase.
+    nroemp = models.IntegerField(db_column='NroEmp')  # Field name made lowercase. The composite primary key (NroEmp, Compro, NroOrd) found, that is not supported. The first column is selected.
+    observ = models.CharField(db_column='Observ', max_length=25, blank=True, null=True)  # Field name made lowercase.
+    poruni = models.FloatField(db_column='PorUni', blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'pedidos_detalle'
+        unique_together = (('nroemp', 'compro', 'nroord'),)

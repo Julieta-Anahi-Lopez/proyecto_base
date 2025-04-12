@@ -18,6 +18,7 @@ class ContactosViewSet(viewsets.ModelViewSet):  # Solo permite GET
         return Contactos.objects.all() 
     
 class WebUsuariosViewSet(viewsets.ModelViewSet):
+    permission_classes = [AllowAny]  # Permitir acceso sin autenticación
     def get_queryset(self):
         return WebUsuarios.objects.all()
     

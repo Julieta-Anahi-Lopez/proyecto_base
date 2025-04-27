@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from apps.categorias.views import TipoRubrosViewSet, TipoSubrubrosViewSet, TipoRubrosWithSubrubrosViewSet, TipoMarcasViewSet
-from apps.articulos.views import ArticulosViewSet, ImagenesViewSet
+from apps.articulos.views import ArticulosViewSet, ImagenesViewSet, VistaArticulosViewSet
 from apps.users.views import ContactosViewSet, WebUsuariosViewSet
 from django.conf import settings
 from django.conf.urls.static import static
@@ -34,6 +34,7 @@ router.register(r'tipo-marcas', TipoMarcasViewSet, basename='tipo-marcas')
 router.register(r'imagenes', ImagenesViewSet, basename='imagenes')
 router.register(r'contactos', ContactosViewSet, basename='contactos')
 router.register(r'web-usuarios', WebUsuariosViewSet, basename='web-usuarios')
+router.register(r'vista_articulos', VistaArticulosViewSet, basename='vista_articulos')
 # router.register(r'pedidos', PedidosViewSet, basename='pedidos')
 # router.register(r'pedidos-detalle', PedidoDetalleViewSet, basename='pedidos-detalle')
 

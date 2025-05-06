@@ -11,7 +11,10 @@ class ArticulosSerializer(serializers.ModelSerializer):
             """
             request = self.context.get('request')
 
+            # print(f"REQUEST EN EL SERIALIZER: {request.__dict__}")
+            # TO DO: Resolver porque el retriev no busca correctamnte las imagenes asociadas al objeto. Si busco por codigo via query_param funciona perfectamente
             # Acceder a las imágenes cargadas en la vista
+            # print(f"OBJ EN EL SERIALIZER: {obj}")
             imagenes = getattr(obj, 'imagenes_cache', [])            
             # print(f"IMAGENES EN EL SERIALIZER: {imagenes}")
             imagenes_dict = {}
@@ -24,7 +27,7 @@ class ArticulosSerializer(serializers.ModelSerializer):
         
     
     class Meta:
-        model = Articulos
+        model = VistaArticulos
         fields = '__all__'  
         
         
@@ -35,8 +38,8 @@ class ImagenesSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class VistaArticulosSerializer(serializers.ModelSerializer):
-     class Meta:
-          model = VistaArticulos
-          fields = '__all__'
+# class VistaArticulosSerializer(serializers.ModelSerializer):
+#      class Meta:
+#           model = VistaArticulos
+#           fields = '__all__'
           

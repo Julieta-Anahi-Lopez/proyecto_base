@@ -81,7 +81,7 @@ class VistaArticulos(models.Model):
     nromar = models.IntegerField(blank=True, null=True)
     cantidad = models.FloatField(db_column='Cantidad', blank=True, null=True)  # Field name made lowercase.
     fecstk = models.DateTimeField(db_column='FecStk', blank=True, null=True)  # Field name made lowercase.
-    costo = models.FloatField(db_column='Costo', blank=True, null=True)  # Field name made lowercase.
+    # costo = models.FloatField(db_column='Costo', blank=True, null=True)  # Field name made lowercase.
     publico = models.FloatField(db_column='Publico', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:

@@ -1,12 +1,14 @@
 from rest_framework import viewsets
-from .models import Articulos, Imagenes
-from .serializers import ArticulosSerializer, ImagenesSerializer
+from .models import Articulos, Imagenes, VistaArticulos
+from .serializers import ArticulosSerializer, ImagenesSerializer, VistaArticulosSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import OuterRef, Subquery
 from django.conf import settings
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from apps.categorias.models import TipoRubros, TipoSubrubros, TipoMarcas
+from rest_framework.permissions import AllowAny
+
 
 
 class ArticulosViewSet(viewsets.ModelViewSet):
@@ -130,6 +132,12 @@ class ArticulosViewSet(viewsets.ModelViewSet):
 class ImagenesViewSet(viewsets.ModelViewSet):
     queryset = Imagenes.objects.all()
     serializer_class = ImagenesSerializer
+
+
+class VistaArticulosViewSet(viewsets.ModelViewSet):
+    queryset = VistaArticulos.objects.all()
+    serializer_class = VistaArticulosSerializer
+    permission_classes = [AllowAny]
 
 
 

@@ -69,3 +69,21 @@ class Imagenes(models.Model):
     class Meta:
         managed = False
         db_table = 'imagenes'
+
+
+
+class VistaArticulos(models.Model):
+    codigo = models.CharField(db_column='Codigo', max_length=20, db_collation='utf8_general_ci', primary_key=True)  # Field name made lowercase.
+    nombre = models.CharField(db_column='Nombre', max_length=255, db_collation='utf8_general_ci', blank=True, null=True)  # Field name made lowercase.
+    nrogru = models.IntegerField(blank=True, null=True)
+    nrosub = models.IntegerField(blank=True, null=True)
+    observ = models.TextField(db_collation='utf8_general_ci', blank=True, null=True)
+    nromar = models.IntegerField(blank=True, null=True)
+    cantidad = models.FloatField(db_column='Cantidad', blank=True, null=True)  # Field name made lowercase.
+    fecstk = models.DateTimeField(db_column='FecStk', blank=True, null=True)  # Field name made lowercase.
+    costo = models.FloatField(db_column='Costo', blank=True, null=True)  # Field name made lowercase.
+    publico = models.FloatField(db_column='Publico', blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'vista_articulos'

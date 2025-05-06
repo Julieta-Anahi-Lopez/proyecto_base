@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Articulos, Imagenes
+from .models import Articulos, Imagenes, VistaArticulos
 from django.conf import settings
 
 class ArticulosSerializer(serializers.ModelSerializer):
@@ -33,3 +33,10 @@ class ImagenesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Imagenes
         fields = '__all__'
+
+
+class VistaArticulosSerializer(serializers.ModelSerializer):
+     class Meta:
+          model = VistaArticulos
+          fields = '__all__'
+          

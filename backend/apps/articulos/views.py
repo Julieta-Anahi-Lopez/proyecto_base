@@ -1,6 +1,6 @@
 from rest_framework import viewsets
 from .models import Articulos, Imagenes, VistaArticulos
-from .serializers import ArticulosSerializer, ImagenesSerializer#, VistaArticulosSerializer
+from .serializers import ArticulosAutenticatedSerializer,ArticulosSerializer, ImagenesSerializer#, VistaArticulosSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import OuterRef, Subquery
 from django.conf import settings
@@ -18,7 +18,7 @@ from rest_framework.response import Response
 
         
 class ArticulosViewSet(viewsets.ModelViewSet):
-    serializer_class = ArticulosSerializer
+    serializer_class = ArticulosAutenticatedSerializer
     filter_backends = [DjangoFilterBackend]  # Habilitamos los filtros
     # permission_classes = [AllowAny]
 
@@ -91,11 +91,11 @@ class ArticulosViewSet(viewsets.ModelViewSet):
                     print("❌ No se encontró un TipoMarca con ese nombre.\n")
 
             if precio_min is not None:
-                queryset = queryset.filter(precio__gte=precio_min)
+                queryset = queryset.filter(publico__gte=precio_min)
                 print(f"✅ Filtro aplicado: precio >= {precio_min}\n")
 
             if precio_max is not None:
-                queryset = queryset.filter(precio__lte=precio_max)
+                queryset = queryset.filter(publico__lte=precio_max)
                 print(f"✅ Filtro aplicado: precio <= {precio_max}\n")
 
             if codigo is not None:
@@ -131,7 +131,15 @@ class ArticulosViewSet(viewsets.ModelViewSet):
     
     # @method_decorator(cache_page(60 * 60 * 2))
     def list(self, request, *args, **kwargs):
-        return super().list(request, *args, **kwargs)
+        if request.user.is_authenticated:
+            print("Usuario autenticado")
+            serializer = ArticulosAutenticatedSerializer(self.get_queryset(), many=True, context={'request': request})
+            return Response(serializer.data)
+        else:
+            print("Usuario no autenticado")
+            serializer = ArticulosSerializer(self.get_queryset(), many=True, context={'request': request})
+            return Response(serializer.data)
+        # return super().list(request, *args, **kwargs)
     
     # def retrieve(self, request, *args, **kwargs):
     #     print("En el retrieve")

@@ -160,9 +160,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REST_FRAMEWORK = {    
     # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     # 'PAGE_SIZE': 100,
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',  # Protección por defecto
-    ],
+    # 'DEFAULT_PERMISSION_CLASSES': [
+    #     'rest_framework.permissions.IsAuthenticated',  # Protección por defecto
+    # ],
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'apps.users.auth.CustomAuth',  # Autenticación personalizada
         'rest_framework.authentication.SessionAuthentication',

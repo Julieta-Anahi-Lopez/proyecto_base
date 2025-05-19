@@ -8,10 +8,12 @@ from .models import TipoRubros
 from .serializers import TipoRubrosSerializer, TipoSubrubrosSerializer, TipoRubrosWithSubrubrosSerializer, TipoMarcasSerializer
 from .models import TipoSubrubros, TipoMarcas
 from rest_framework import generics
+from rest_framework.permissions import AllowAny
 
 
 class TipoRubrosViewSet(viewsets.ReadOnlyModelViewSet):  # Solo permite GET
     serializer_class = TipoRubrosSerializer
+    permission_classes = [AllowAny]
 
     def get_queryset(self):
         return TipoRubros.objects.filter(verweb='1')  # Filtra solo los registros donde verweb='1'
@@ -54,6 +56,7 @@ class TipoRubrosWithSubrubrosViewSet(viewsets.ReadOnlyModelViewSet):
     """
     queryset = TipoRubros.objects.filter(verweb='1')
     serializer_class = TipoRubrosSerializer  # Usamos el serializer original para TipoRubros
+    permission_classes = [AllowAny]
 
     def list(self, request, *args, **kwargs):
         """
@@ -78,6 +81,7 @@ class TipoRubrosWithSubrubrosViewSet(viewsets.ReadOnlyModelViewSet):
 
 class TipoMarcasViewSet(viewsets.ReadOnlyModelViewSet):  # Solo permite GET
     serializer_class = TipoMarcasSerializer
+    permission_classes = [AllowAny]
 
     def get_queryset(self):
         return TipoMarcas.objects.all()  # Filtra solo los registros donde verweb='1'

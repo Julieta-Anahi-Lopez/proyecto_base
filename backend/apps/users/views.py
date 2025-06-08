@@ -97,6 +97,24 @@ class WebUsuariosViewSet(viewsets.ModelViewSet):
     def perform_update(self, serializer):
         serializer.save()
 
+    def _es_localidad_lista_cero(self, codigo_postal: str) -> bool:
+        # Lista de códigos postales válidos (como strings)
+        codigos_validos = {
+            "8000",  # Bahía Blanca
+            "8105",  # General Daniel Cerri
+            "8109",  # Punta Alta
+            "8150",  # Coronel Dorrego
+            "8153",  # Monte Hermoso
+            "8103",  # Ingeniero White
+            "8160",  # Tornquist
+            "7530",  # Coronel Pringles
+            "8168",  # Sierra de la Ventana
+            "8118",  # Cabildo
+            "8170",  # Pigue
+        }
+
+        return str(codigo_postal) in codigos_validos
+
     
     def _crear_contacto(self, data):
         # Lógica para crear un contacto
@@ -110,10 +128,10 @@ class WebUsuariosViewSet(viewsets.ModelViewSet):
         domnro= data.get('domnro', 'SN')
         dompis= data.get('dompis', 'SP')
         domdep= data.get('domdep', 'Sdep')
-        locali= data.get('locali', 8000) # Si no indica, por defecto es Bahia Blanca
-        # print(f"locali: {locali}")
+        locali= data.get('locali', None) # Si no indica, None para forzar que indiquen localidad en la validacion
+        print(f"locali: {locali}")
         cp= data.get('cp', str(locali)[-4:])
-        # print(f"cp: {cp}")
+        print(f"cp: {cp}")
         provin = data.get('provin', 1) # Si no indica, por defecto es Buenos Aires
         telefo = data.get('telefo', 'Sin telefono')
         fax = data.get('fax', 'Sin fax')
@@ -132,7 +150,7 @@ class WebUsuariosViewSet(viewsets.ModelViewSet):
         dirweb = data.get('dirweb', 'Sin direccion web')
         calenv = data.get('calenv', 'Sin calle envio')
         nroenv = data.get('nroenv', 'SN')
-        locenv = data.get('locenv', 8000) # Si no indica, por defecto es Bahia Blanca
+        locenv = data.get('locali', 8000) # Si no indica, por defecto es Bahia Blanca ---> Se asume que la localid de envio es la misma que la de registracion.
         codenv = data.get('codenv', str(locenv)[-4:])
         # print(f"codenv: {codenv}")
         telenv = data.get('telenv', 'Sin telefono envio')
@@ -147,7 +165,7 @@ class WebUsuariosViewSet(viewsets.ModelViewSet):
         nrodoc = data.get('nrodoc', None)
         porfle = data.get('porfle', 0)
         nrocbu = data.get('nrocbu', 'Sin nro cbu')
-        nrolis = data.get('nrolis', 0)
+
         sincta = data.get('sincta', 0)
         cheque = data.get('cheque', 'Sin cheque')
         exeley = data.get('exeley', 0)
@@ -160,6 +178,18 @@ class WebUsuariosViewSet(viewsets.ModelViewSet):
         grande = data.get('grande', False)
         cbuinf = data.get('cbuinf', False)
         periva = data.get('periva', 0)
+
+        if not locali:
+            raise ValueError('El campo localidad es obligatorio')
+
+        # Asino numero de lista en funcion del codigo postal.
+        localidad_lista_cero = self._es_localidad_lista_cero(locali)
+        if localidad_lista_cero:
+            print("Entre a lista 0")
+            nrolis = 0
+        else:
+            print("Entre a lista 1")
+            nrolis = 1
 
         if nrodoc is None:
             raise ValueError('El DNI es obligatorio es obligatorio')
@@ -232,7 +262,8 @@ class WebUsuariosViewSet(viewsets.ModelViewSet):
             print(f"Contacto ya existente: {contacto}")    
         return contacto
 
-        
+
+
 
 
 

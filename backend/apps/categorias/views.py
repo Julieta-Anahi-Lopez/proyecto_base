@@ -84,4 +84,4 @@ class TipoMarcasViewSet(viewsets.ReadOnlyModelViewSet):  # Solo permite GET
     permission_classes = [AllowAny]
 
     def get_queryset(self):
-        return TipoMarcas.objects.all()  # Filtra solo los registros donde verweb='1'
+        return TipoMarcas.objects.filter(verweb=1)  # Filtra solo los registros donde verweb='1'

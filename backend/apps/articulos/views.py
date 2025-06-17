@@ -9,6 +9,7 @@ from django.views.decorators.cache import cache_page
 from apps.categorias.models import TipoRubros, TipoSubrubros, TipoMarcas
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from django.db.models import Case, When, IntegerField
 
 
 
@@ -33,12 +34,20 @@ class ArticulosViewSet(viewsets.ModelViewSet):
         elif self.action == 'list':
             print("\n🔍 **Iniciando filtrado de artículos...**\n")
 
-            queryset = VistaArticulos.objects.all()
+            
+
+            queryset = VistaArticulos.objects.annotate(
+                prioridad=Case(
+                    When(nromar=6, then=0),
+                    default=1,
+                    output_field=IntegerField()
+                )
+            ).order_by('prioridad', 'nromar')
             print(f"📌 Total de artículos en la base de datos: {queryset.count()}\n")
 
             # Obtener los parámetros de la URL
             nrogru = self.request.query_params.get('nrogru', None)
-            nrosub = self.request.query_params.get('nrosub', None)
+            subrubro = self.request.query_params.get('subrubro', None)
             nromar = self.request.query_params.get('nromar', None)
             precio_min = self.request.query_params.get('precio_min', None)
             precio_max = self.request.query_params.get('precio_max', None)
@@ -48,7 +57,7 @@ class ArticulosViewSet(viewsets.ModelViewSet):
 
             print(f"🎯 **Parámetros recibidos en la URL:**")
             print(f"   🏷️ nrogru: {nrogru}")
-            print(f"   🏷️ nrosub: {nrosub}")
+            print(f"   🏷️ nrosub: {subrubro}")
             print(f"   🏷️ nromar: {nromar}")
             print(f"   💰 precio_min: {precio_min}")
             print(f"   💰 precio_max: {precio_max}")
@@ -56,39 +65,47 @@ class ArticulosViewSet(viewsets.ModelViewSet):
             print(f"   🏷️ nombre: {nombre}")
             print(f"   📝 observ: {observ}\n")
 
+            # ahora los parametros estan en la vista de nro gru, la tabla que consumo los tiene, asique filtro directamente el queryset
             # Aplicar filtros si los parámetros están presentes
-            if nrogru is not None and nrosub is None:
+            if nrogru is not None and subrubro is None:
                 print("🔄 Buscando código de TipoRubros...")
-                nrogru = TipoRubros.objects.filter(nombre__icontains=nrogru).first()
-                if nrogru:
-                    nrogru = nrogru.codigo
-                    queryset = queryset.filter(nrogru=nrogru)
-                    print(f"✅ Filtro aplicado: nrogru = {nrogru}\n")
-                else:
-                    print("❌ No se encontró un TipoRubro con ese nombre.\n")
+                queryset = queryset.filter(nrogru=nrogru)
+                print(f"✅ Filtro aplicado: nrogru = {nrogru}\n")
+                
+                # nrogru = TipoRubros.objects.filter(nombre__icontains=nrogru).first()
+                # if nrogru:
+                #     nrogru = nrogru.codigo
+                #     queryset = queryset.filter(nrogru=nrogru)
+                # else:
+                #     print("❌ No se encontró un TipoRubro con ese nombre.\n")
 
-            if nrogru is not None and nrosub is not None:
+            if nrogru is not None and subrubro is not None:
                 print("🔄 Buscando código de TipoRubros y TipoSubrubros...")
-                nrogru = TipoRubros.objects.filter(nombre__icontains=nrogru).first()
-                nrosub = TipoSubrubros.objects.filter(nombre__icontains=nrosub).first()
+                queryset = queryset.filter(nrogru=nrogru, nrosub=subrubro)
+                print(f"✅ Filtro aplicado: nrogru = {nrogru}, nrosub = {subrubro}\n")
+                # nrogru = TipoRubros.objects.filter(nombre__icontains=nrogru).first()
+                # nrosub = TipoSubrubros.objects.filter(nombre__icontains=nrosub).first()
 
-                if nrogru and nrosub:
-                    nrogru = nrogru.codigo
-                    nrosub = nrosub.codigo
-                    queryset = queryset.filter(nrogru=nrogru, nrosub=nrosub)
-                    print(f"✅ Filtro aplicado: nrogru = {nrogru}, nrosub = {nrosub}\n")
-                else:
-                    print("❌ No se encontró el TipoRubro o el TipoSubrubro indicado.\n")
+                # if nrogru and nrosub:
+                #     nrogru = nrogru.codigo
+                #     nrosub = nrosub.codigo
+                #     queryset = queryset.filter(nrogru=nrogru, nrosub=nrosub)
+                #     print(f"✅ Filtro aplicado: nrogru = {nrogru}, nrosub = {nrosub}\n")
+                # else:
+                #     print("❌ No se encontró el TipoRubro o el TipoSubrubro indicado.\n")
 
             if nromar is not None:
+                
                 print("🔄 Buscando código de TipoMarcas...")
-                nromar = TipoMarcas.objects.filter(nombre__icontains=nromar).first()
-                if nromar:
-                    nromar = nromar.codigo
-                    queryset = queryset.filter(nromar=nromar)
-                    print(f"✅ Filtro aplicado: nromar = {nromar}\n")
-                else:
-                    print("❌ No se encontró un TipoMarca con ese nombre.\n")
+                queryset = queryset.filter(nromar=nromar)
+                
+                # nromar = TipoMarcas.objects.filter(nombre__icontains=nromar).first()
+                # if nromar:
+                #     nromar = nromar.codigo
+                #     queryset = queryset.filter(nromar=nromar)
+                #     print(f"✅ Filtro aplicado: nromar = {nromar}\n")
+                # else:
+                #     print("❌ No se encontró un TipoMarca con ese nombre.\n")
 
             if precio_min is not None:
                 queryset = queryset.filter(publico__gte=precio_min)

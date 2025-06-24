@@ -60,7 +60,7 @@ class ArticulosViewSet(viewsets.ModelViewSet):
                     default=1,
                     output_field=IntegerField()
                 )
-            ).order_by('prioridad', 'nromar')
+            ).order_by('prioridad', 'nromar', '-stock')
             print(f"📌 Total de artículos en la base de datos: {queryset.count()}\n")
 
             # Obtener los parámetros de la URL

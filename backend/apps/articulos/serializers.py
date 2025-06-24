@@ -4,6 +4,7 @@ from django.conf import settings
 
 class ArticulosAutenticatedSerializer(serializers.ModelSerializer):
     imagenes = serializers.SerializerMethodField()
+    precio_final = serializers.SerializerMethodField()
 
     def get_imagenes(self, obj):
             """
@@ -25,10 +26,23 @@ class ArticulosAutenticatedSerializer(serializers.ModelSerializer):
 
             return [imagenes_dict] if imagenes_dict else []
         
+        
+    def get_precio_final(self, obj):
+        contacto = self.context.get('contacto')
+        # print(f"Contacto en el serializer: {contacto}")
+        if not contacto:
+            return None
+
+        return obj.precio if contacto.nrolis == 0 else obj.lista1
+
+        
     
     class Meta:
         model = VistaArticulos
-        fields = '__all__'  
+        fields = [
+            'codigo', 'nombre', 'stock', 'costo', 'rubro', 'subrubro',
+            'nromar', 'marca', 'imagenes', 'precio_final'
+        ] 
 
 
 class ArticulosSerializer(serializers.ModelSerializer):
@@ -57,7 +71,7 @@ class ArticulosSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = VistaArticulos
-        fields = ['codigo', 'nombre', 'nrogru', 'nrosub', 'observ', 'nromar', 'cantidad', 'imagenes']
+        fields = ['codigo', 'nombre','stock', 'costo', 'rubro', 'subrubro', 'nromar', 'marca','imagenes']
         
         
         

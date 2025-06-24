@@ -63,6 +63,7 @@ class PedidosViewSet(ModelViewSet):
                     status=status.HTTP_400_BAD_REQUEST
                 )
             nro_vendedor = contacto.nroven
+            nrolis = contacto.nrolis  # Lista de precios del contacto
         except Exception as e:
             return Response(
                 {"error": f"Error al obtener el vendedor: {str(e)}"},
@@ -131,7 +132,7 @@ class PedidosViewSet(ModelViewSet):
                         'penden': cantidad,  # Cantidad pendiente inicialmente igual a cantidad
                         'pendfc': cantidad,  # Pendiente de facturación, inicialmente igual a cantidad
                         'precio': float(detalle['precio']),
-                        'nrolis': detalle.get('nrolis', 0),
+                        'nrolis': nrolis,  # Lista de precios del contacto
                         'pordes': float(detalle.get('descuento', 0)),
                         'nroemp': nro_emp,
                         'observ': detalle.get('observacion', ''),

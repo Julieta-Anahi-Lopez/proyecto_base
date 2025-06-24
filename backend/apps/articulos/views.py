@@ -10,6 +10,7 @@ from apps.categorias.models import TipoRubros, TipoSubrubros, TipoMarcas
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from django.db.models import Case, When, IntegerField
+from apps.users.models import Contactos
 
 
 
@@ -22,11 +23,28 @@ class ArticulosViewSet(viewsets.ModelViewSet):
     serializer_class = ArticulosAutenticatedSerializer
     filter_backends = [DjangoFilterBackend]  # Habilitamos los filtros
     # permission_classes = [AllowAny]
+    
+    
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        user = self.request.user
+
+
+        contacto = None
+        if user.is_authenticated:
+            contacto = Contactos.objects.filter(nrocon=user.codigo).first()
+        context['contacto'] = contacto
+        return context
+    
+    def get_serializer_class(self):
+        if self.request.user.is_authenticated:
+            return ArticulosAutenticatedSerializer
+        return ArticulosSerializer
+
 
     def get_queryset(self):
 
         if self.action == 'retrieve':
-            print("En el retrieve")
             instance = VistaArticulos.objects.filter(codigo=self.kwargs['pk']).first()
             print(f"Objeto encontrado: {instance}")
 
@@ -46,8 +64,8 @@ class ArticulosViewSet(viewsets.ModelViewSet):
             print(f"📌 Total de artículos en la base de datos: {queryset.count()}\n")
 
             # Obtener los parámetros de la URL
-            nrogru = self.request.query_params.get('nrogru', None)
-            subrubro = self.request.query_params.get('subrubro', None)
+            rubro = self.request.query_params.get('nrogru', None)
+            subrubro = self.request.query_params.get('nrosub', None)
             nromar = self.request.query_params.get('nromar', None)
             precio_min = self.request.query_params.get('precio_min', None)
             precio_max = self.request.query_params.get('precio_max', None)
@@ -56,7 +74,7 @@ class ArticulosViewSet(viewsets.ModelViewSet):
             observ = self.request.query_params.get('observ', None)
 
             print(f"🎯 **Parámetros recibidos en la URL:**")
-            print(f"   🏷️ nrogru: {nrogru}")
+            print(f"   🏷️ nrogru: {rubro}")
             print(f"   🏷️ nrosub: {subrubro}")
             print(f"   🏷️ nromar: {nromar}")
             print(f"   💰 precio_min: {precio_min}")
@@ -67,10 +85,10 @@ class ArticulosViewSet(viewsets.ModelViewSet):
 
             # ahora los parametros estan en la vista de nro gru, la tabla que consumo los tiene, asique filtro directamente el queryset
             # Aplicar filtros si los parámetros están presentes
-            if nrogru is not None and subrubro is None:
+            if rubro is not None and subrubro is None:
                 print("🔄 Buscando código de TipoRubros...")
-                queryset = queryset.filter(nrogru=nrogru)
-                print(f"✅ Filtro aplicado: nrogru = {nrogru}\n")
+                queryset = queryset.filter(rubro=rubro)
+                print(f"✅ Filtro aplicado: rubro = {rubro}\n")
                 
                 # nrogru = TipoRubros.objects.filter(nombre__icontains=nrogru).first()
                 # if nrogru:
@@ -79,10 +97,10 @@ class ArticulosViewSet(viewsets.ModelViewSet):
                 # else:
                 #     print("❌ No se encontró un TipoRubro con ese nombre.\n")
 
-            if nrogru is not None and subrubro is not None:
+            if rubro is not None and subrubro is not None:
                 print("🔄 Buscando código de TipoRubros y TipoSubrubros...")
-                queryset = queryset.filter(nrogru=nrogru, nrosub=subrubro)
-                print(f"✅ Filtro aplicado: nrogru = {nrogru}, nrosub = {subrubro}\n")
+                queryset = queryset.filter(rubro=rubro, nrosub=subrubro)
+                print(f"✅ Filtro aplicado: nrogru = {rubro}, nrosub = {subrubro}\n")
                 # nrogru = TipoRubros.objects.filter(nombre__icontains=nrogru).first()
                 # nrosub = TipoSubrubros.objects.filter(nombre__icontains=nrosub).first()
 
@@ -145,18 +163,33 @@ class ArticulosViewSet(viewsets.ModelViewSet):
             return queryset
 
 
-    
-    # @method_decorator(cache_page(60 * 60 * 2))
     def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
         if request.user.is_authenticated:
             print("Usuario autenticado")
-            serializer = ArticulosAutenticatedSerializer(self.get_queryset(), many=True, context={'request': request})
-            return Response(serializer.data)
         else:
             print("Usuario no autenticado")
-            serializer = ArticulosSerializer(self.get_queryset(), many=True, context={'request': request})
-            return Response(serializer.data)
-        # return super().list(request, *args, **kwargs)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+
+
+
+
+
+    
+    # @method_decorator(cache_page(60 * 60 * 2))
+    # def list(self, request, *args, **kwargs):
+    #     if request.user.is_authenticated:
+    #         print("Usuario autenticado")
+    #         serializer = ArticulosAutenticatedSerializer(self.get_queryset(), many=True, context={'request': request})
+    #         return Response(serializer.data)
+    #     else:
+    #         print("Usuario no autenticado")
+    #         serializer = ArticulosSerializer(self.get_queryset(), many=True, context={'request': request})
+    #         return Response(serializer.data)
+    #     # return super().list(request, *args, **kwargs)
     
     # def retrieve(self, request, *args, **kwargs):
     #     print("En el retrieve")

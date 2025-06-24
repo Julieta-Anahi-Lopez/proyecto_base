@@ -72,17 +72,34 @@ class Imagenes(models.Model):
 
 
 
+# class VistaArticulos(models.Model):
+#     codigo = models.CharField(db_column='Codigo', max_length=20, db_collation='utf8_general_ci', primary_key=True)  # Field name made lowercase.
+#     nombre = models.CharField(db_column='Nombre', max_length=255, db_collation='utf8_general_ci', blank=True, null=True)  # Field name made lowercase.
+#     nrogru = models.IntegerField(blank=True, null=True)
+#     nrosub = models.IntegerField(blank=True, null=True)
+#     observ = models.TextField(db_collation='utf8_general_ci', blank=True, null=True)
+#     nromar = models.IntegerField(blank=True, null=True)
+#     cantidad = models.FloatField(db_column='Cantidad', blank=True, null=True)  # Field name made lowercase.
+#     fecstk = models.DateTimeField(db_column='FecStk', blank=True, null=True)  # Field name made lowercase.
+#     # costo = models.FloatField(db_column='Costo', blank=True, null=True)  # Field name made lowercase.
+#     publico = models.FloatField(db_column='Publico', blank=True, null=True)  # Field name made lowercase.
+
+#     class Meta:
+#         managed = False
+#         db_table = 'vista_articulos'
+
+
 class VistaArticulos(models.Model):
     codigo = models.CharField(db_column='Codigo', max_length=20, db_collation='utf8_general_ci', primary_key=True)  # Field name made lowercase.
     nombre = models.CharField(db_column='Nombre', max_length=255, db_collation='utf8_general_ci', blank=True, null=True)  # Field name made lowercase.
-    nrogru = models.IntegerField(blank=True, null=True)
-    nrosub = models.IntegerField(blank=True, null=True)
-    observ = models.TextField(db_collation='utf8_general_ci', blank=True, null=True)
-    nromar = models.IntegerField(blank=True, null=True)
-    cantidad = models.FloatField(db_column='Cantidad', blank=True, null=True)  # Field name made lowercase.
-    fecstk = models.DateTimeField(db_column='FecStk', blank=True, null=True)  # Field name made lowercase.
-    # costo = models.FloatField(db_column='Costo', blank=True, null=True)  # Field name made lowercase.
-    publico = models.FloatField(db_column='Publico', blank=True, null=True)  # Field name made lowercase.
+    stock = models.FloatField(db_column='Stock', blank=True, null=True)  # Field name made lowercase.
+    costo = models.FloatField(db_column='Costo', blank=True, null=True)  # Field name made lowercase.
+    rubro = models.IntegerField(db_column='Rubro', blank=True, null=True)  # Field name made lowercase.
+    subrubro = models.IntegerField(db_column='SubRubro', blank=True, null=True)  # Field name made lowercase.
+    nromar = models.IntegerField(db_column='NroMar', blank=True, null=True)  # Field name made lowercase.
+    marca = models.CharField(db_column='Marca', max_length=60, db_collation='utf8_general_ci', blank=True, null=True)  # Field name made lowercase.
+    precio = models.FloatField(db_column='Precio', blank=True, null=True)  # Field name made lowercase.
+    lista1 = models.FloatField(db_column='Lista1', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False
